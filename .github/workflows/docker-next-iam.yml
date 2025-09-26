@@ -1,0 +1,46 @@
+name: Build & Push next-iam to GHCR
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'next-iam/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/next-iam
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./next-iam
+          file: ./next-iam/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ github.sha }}
+          # 若使用 SQLx 离线编译，请确保 .sqlx/ 在 next-iam 中并被复制进镜像
+          build-args: |
+            SQLX_OFFLINE=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

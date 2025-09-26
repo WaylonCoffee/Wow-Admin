@@ -1,0 +1,46 @@
+name: CI (next-iam)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'next-iam/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'next-iam/**'
+      - '.github/workflows/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: next-iam
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.88.0
+          components: rustfmt, clippy
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            next-iam/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('next-iam/**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: fmt
+        run: cargo fmt --all -- --check
+
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: build (debug)
+        run: cargo build --workspace
