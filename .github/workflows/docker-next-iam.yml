@@ -26,19 +26,32 @@ jobs:
 
       - name: Update Kustomize image tag
         run: |
+          set -euo pipefail
           FILE=next-iam/k8s/base/kustomization.yaml
-          IMG=ghcr.io/wayloncoffee/next-iam
-          TAG=${{ steps.vars.outputs.TAG }}
-          # 用 yq 更优；若未安装，用 sed 简化替换：
-          sed -i "s|name: ${IMG}[[:space:]]*newTag: .*|name: ${IMG}\n    newTag: ${TAG}|" "$FILE"
+          IMG="${{ env.IMAGE }}"         # ghcr.io/.../next-iam
+          TAG="${GITHUB_SHA}"
+
+          # 读当前 tag（用 grep/awk 简单取值）
+          CURRENT=$(awk '/name:[[:space:]]*'"${IMG//\//\\/}"'/{f=1;next} f&&/newTag:/{print $2;exit}' "$FILE" || true)
+          echo "current=$CURRENT, target=$TAG"
+
+          if [ "$CURRENT" = "$TAG" ] && [ -n "$CURRENT" ]; then
+            echo "no_change=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 更新文件（用 sed；你也可用 yq）
+          sed -i -E "/name:\s*${IMG//\//\\/}/,/^- name:|^images:/{s/newTag:.*/newTag: ${TAG}/}" "$FILE"
+          echo "no_change=false" >> "$GITHUB_OUTPUT"
 
       - name: Commit & push
+        if: steps.bump.outputs.no_change != 'true'
         run: |
-          git config user.name "WaylonCoffee"
-          git config user.email "waylon_coffee@outlook.com"
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add next-iam/k8s/base/kustomization.yaml
-          git commit -m "chore(k8s): bump next-iam image to ${{ steps.vars.outputs.TAG }}"
-          git diff --cached --quiet || git commit -m "chore(k8s): bump next-iam image to ${{ steps.vars.outputs.TAG }}"
+          git commit -m "chore(k8s): bump next-iam image to ${{ github.sha }}"
           git push
 
       - name: owner lowercase
