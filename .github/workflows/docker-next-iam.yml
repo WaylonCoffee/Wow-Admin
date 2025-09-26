@@ -36,8 +36,9 @@ jobs:
           context: ./next-iam
           file: ./next-iam/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ｜
+            ${{ steps.img.outputs.image }}:latest
+            ${{ steps.img.outputs.image }}:${{ github.sha }}
           # 使用 sqlx 离线，请确保仓库中有 .sqlx/ 并在 Dockerfile 里 COPY 进去
           build-args: |
             SQLX_OFFLINE=true
