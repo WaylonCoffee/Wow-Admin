@@ -1,0 +1,10 @@
+/target
+/.git
+/.github
+/.vscode
+/.idea
+**/.DS_Store
+**/node_modules
+**/.env*
+**/.cursor
+**/.vscode

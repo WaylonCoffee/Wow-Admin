@@ -1,0 +1,28 @@
+# 编译产物
+/target
+**/*.rs.bk
+
+# Cargo 相关
+Cargo.lock
+.cargo/
+
+# IDE / 编辑器
+.idea/
+.vscode/
+.DS_Store
+
+# 环境变量文件
+.env
+.env.*
+
+# 日志 / 临时文件
+*.log
+*.tmp
+
+# 覆盖率 / 测试报告
+coverage/
+*.profraw
+*.profdata
+
+# macOS
+.DS_Store

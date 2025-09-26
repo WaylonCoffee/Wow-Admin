@@ -1,0 +1,38 @@
+# 默认任务
+default: build
+
+# 编译调试版
+build:
+    cargo build
+
+# 编译 release
+release:
+    cargo build --release
+
+# 运行
+run:
+    cargo run
+
+# 运行 release
+run-release:
+    cargo run --release
+
+# 测试
+test:
+    cargo test
+
+# 格式化
+fmt:
+    cargo fmt --all
+
+# Lint 检查
+clippy:
+    cargo clippy --all-targets --all-features -- -D warnings
+
+# 数据库迁移 (sqlx)
+migrate:
+    sqlx migrate run
+
+# 清理
+clean:
+    cargo clean
