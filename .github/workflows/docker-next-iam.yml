@@ -38,7 +38,8 @@ jobs:
           git config user.email "waylon_coffee@outlook.com"
           git add next-iam/k8s/base/kustomization.yaml
           git commit -m "chore(k8s): bump next-iam image to ${{ steps.vars.outputs.TAG }}"
-           git push
+          git diff --cached --quiet || git commit -m "chore(k8s): bump next-iam image to ${{ steps.vars.outputs.TAG }}"
+          git push
 
       - name: owner lowercase
         run: echo "OWNER_LC=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
