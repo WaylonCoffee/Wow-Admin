@@ -40,8 +40,8 @@ jobs:
           file: ./next-iam/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.OWNER_LC }}/next-iam:latest
-            ghcr.io/${{ env.OWNER_LC }}/next-iam:${{ github.sha }}
+            ${{ env.OWNER_LC }}/next-iam:latest
+            ${{ env.OWNER_LC }}/next-iam:${{ github.sha }}
           # 若使用 SQLx 离线编译，请确保 .sqlx/ 在 next-iam 中并被复制进镜像
           build-args: |
             SQLX_OFFLINE=true
