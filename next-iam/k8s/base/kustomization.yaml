@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# 统一命名空间（Argo CD 也可用 SyncOption: CreateNamespace=true 自动创建）
+namespace: iam
+
+# 给所有对象打统一的标签，方便检索与治理
+commonLabels:
+  app.kubernetes.io/name: next-iam
+  app.kubernetes.io/part-of: next-iam
+
+# 业务资源（与同目录下 deployment.yaml / service.yaml / ingress.yaml 对应）
+resources:
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+
+# 镜像占位：CI 会把 newTag 改成具体的 commit SHA
+images:
+  - name: ghcr.io/wayloncoffee/next-iam
+    newTag: latest
+#（可选）对常量配置用 ConfigMap；变更频率高/敏感的放 Secret（建议在外部创建）
+#configMapGenerator:
+#  - name: next-iam-config
+#    literals:
+#      - RUST_LOG=info
+#generatorOptions:
+#  disableNameSuffixHash: true  # 避免 CM 名字加 hash，便于引用

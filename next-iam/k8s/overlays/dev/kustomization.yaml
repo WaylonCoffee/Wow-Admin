@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+# 开发环境覆盖项（按需添加）
+patches:
+  # 示例：把副本数改成 1
+  - target:
+      kind: Deployment
+      name: next-iam
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+
+# 也可以在 dev 层覆盖镜像 tag（不走 CI 回写时的做法）
+#images:
+#  - name: ghcr.io/wayloncoffee/next-iam
+#    newTag: dev-override

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: next-iam
+  labels: { app: next-iam }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: next-iam }
+  template:
+    metadata:
+      labels: { app: next-iam }
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret # ← GHCR 私有镜像时需要（第 5 步创建）
+      containers:
+        - name: app
+          image: ghcr.io/wayloncoffee/next-iam:latest # ← Kustomize 会覆盖这个 tag
+          ports:
+            - containerPort: 8080
+          env:
+            - name: RUST_LOG
+              value: info
+            # 你的其他配置/数据库连接：
+            - name: APP__DATABASE__URL
+              valueFrom:
+              secretKeyRef: { name: iam-db-secret, key: url }
