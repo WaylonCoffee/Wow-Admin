@@ -38,7 +38,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # 如使用 sqlx 离线，请确保仓库中有 .sqlx/ 并在 Dockerfile 里 COPY 进去
+          # 使用 sqlx 离线，请确保仓库中有 .sqlx/ 并在 Dockerfile 里 COPY 进去
           build-args: |
             SQLX_OFFLINE=true
           cache-from: type=gha
