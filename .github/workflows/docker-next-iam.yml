@@ -20,8 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: docker/setup-qemu-action@v3
-
       - name: owner lowercase
         run: echo "OWNER_LC=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
@@ -62,7 +60,6 @@ jobs:
         with:
           context: ./next-iam
           file: ./next-iam/Dockerfile
-          platforms: linux/amd64,linux/arm64 # ← 关键2：多架构
           push: true
           tags: |
             ghcr.io/wayloncoffee/next-iam:latest
