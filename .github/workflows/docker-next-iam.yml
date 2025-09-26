@@ -20,6 +20,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set image tag
+        id: vars
+        run: echo "TAG=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Update Kustomize image tag
+        run: |
+          FILE=next-iam/k8s/base/kustomization.yaml
+          IMG=ghcr.io/wayloncoffee/next-iam
+          TAG=${{ steps.vars.outputs.TAG }}
+          # 用 yq 更优；若未安装，用 sed 简化替换：
+          sed -i "s|name: ${IMG}[[:space:]]*newTag: .*|name: ${IMG}\n    newTag: ${TAG}|" "$FILE"
+
+      - name: Commit & push
+        run: |
+          git config user.name "WaylonCoffee"
+          git config user.email "waylon_coffee@outlook.com"
+          git add next-iam/k8s/base/kustomization.yaml
+          git commit -m "chore(k8s): bump next-iam image to ${{ steps.vars.outputs.TAG }}"
+           git push
+
       - name: owner lowercase
         run: echo "OWNER_LC=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
