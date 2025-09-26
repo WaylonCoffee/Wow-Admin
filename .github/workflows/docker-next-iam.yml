@@ -20,9 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: To lowercase
-        run: echo "OWNER_LC=${OWNER,,}" >> $GITHUB_ENV
-
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -39,10 +36,9 @@ jobs:
           context: ./next-iam
           file: ./next-iam/Dockerfile
           push: true
-          tags: |
-            ghcr.io/${{ env.OWNER_LC }}/next-iam:latest
-            ghcr.io/${{ env.OWNER_LC }}/next-iam:${{ github.sha }}
-          # 若使用 SQLx 离线编译，请确保 .sqlx/ 在 next-iam 中并被复制进镜像
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # 如使用 sqlx 离线，请确保仓库中有 .sqlx/ 并在 Dockerfile 里 COPY 进去
           build-args: |
             SQLX_OFFLINE=true
           cache-from: type=gha
