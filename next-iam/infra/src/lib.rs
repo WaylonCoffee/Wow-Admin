@@ -1,8 +1,8 @@
 pub mod user_repo {
-    use sqlx::{PgPool};
-    use uuid::Uuid;
     use anyhow::Result;
     use domain::user::User;
+    use sqlx::PgPool;
+    use uuid::Uuid;
 
     pub async fn find_user_by_id(pool: &PgPool, id: Uuid) -> Result<Option<User>> {
         let row = sqlx::query_as!(

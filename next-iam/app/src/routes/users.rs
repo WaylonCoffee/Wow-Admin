@@ -1,16 +1,15 @@
+use crate::{error::AppError, state::SharedState};
 use axum::{
+    Json, Router,
     extract::{Path, State},
     routing::get,
-    Json, Router,
 };
 use domain::user::User;
 use infra::user_repo;
 use uuid::Uuid;
-use crate::{state::SharedState, error::AppError};
 
 pub fn routes() -> Router<SharedState> {
-    Router::new()
-        .route("/{id}", get(get_user))
+    Router::new().route("/{id}", get(get_user))
 }
 
 async fn get_user(
