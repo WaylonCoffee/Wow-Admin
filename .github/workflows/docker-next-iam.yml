@@ -49,12 +49,16 @@ jobs:
           context: ./next-iam
           file: ./next-iam/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }} # ← 就用这里的
+          tags: |
+            ghcr.io/wayloncoffee/next-iam:latest
+            ghcr.io/wayloncoffee/next-iam:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }} # 可选
           # 使用 sqlx 离线，请确保仓库中有 .sqlx/ 并在 Dockerfile 里 COPY 进去
           build-args: |
             SQLX_OFFLINE=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - run: |
-          echo "images=ghcr.io/${{ env.OWNER_LC }}/next-iam"
+          cache-from: |
+            type=gha
+            type=registry,ref=${{ steps.img.outputs.cache_ref }}
+          cache-to: |
+            type=gha,mode=max
+            type=registry,ref=${{ steps.img.outputs.cache_ref }},mode=max,compression=zstd
