@@ -3,7 +3,6 @@
 **/*.rs.bk
 
 # Cargo 相关
-Cargo.lock
 .cargo/
 
 # IDE / 编辑器
