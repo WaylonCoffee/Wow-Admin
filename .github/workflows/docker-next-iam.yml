@@ -58,6 +58,7 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v6
         with:
+          platforms: linux/arm64
           context: ./next-iam
           file: ./next-iam/Dockerfile
           push: true
