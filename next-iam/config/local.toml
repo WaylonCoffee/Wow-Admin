@@ -3,5 +3,5 @@ host = "127.0.0.1"
 port = 8080
 
 [database]
-url = "postgres://postgres:123456@host.docker.internal:5432/iam_platform"
+url = "postgres://postgres:123456@localhost:5432/iam_platform"
 max_connections = 10
