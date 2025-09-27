@@ -25,3 +25,7 @@ spec:
             - name: APP__DATABASE__URL
               valueFrom:
               secretKeyRef: { name: iam-db-secret, key: url }
+    volumes:
+      - name: app-config
+        configMap:
+          name: next-iam-config
