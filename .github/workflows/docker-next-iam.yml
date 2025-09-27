@@ -20,6 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 1) 启用 QEMU：runner 是 amd64，构建 arm64 时需要，否则速度和兼容性都差
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: owner lowercase
         run: echo "OWNER_LC=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
@@ -65,7 +69,7 @@ jobs:
           tags: |
             ghcr.io/wayloncoffee/next-iam:latest
             ghcr.io/wayloncoffee/next-iam:${{ github.sha }}
-          labels: ${{ steps.meta.output34s.labels }} # 可选
+          labels: ${{ steps.meta.outputs.labels }} # 可选
           # 使用 sqlx 离线，请确保仓库中有 .sqlx/ 并在 Dockerfile 里 COPY 进去
           build-args: |
             SQLX_OFFLINE=true
